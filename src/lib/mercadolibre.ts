@@ -90,7 +90,7 @@ async function requestMercadoLibreToken(body: URLSearchParams) {
     const message =
       typeof payload?.message === "string"
         ? payload.message
-        : "Mercado Livre Brasil token request failed.";
+        : "Brazil marketplace token request failed.";
 
     throw new Error(message);
   }
@@ -178,7 +178,7 @@ export async function refreshMercadoLibreTokenIfNeeded(): Promise<{
   if (!config.clientId || !config.clientSecret) {
     return {
       token: null,
-      error: "缺少 Mercado Libre Client ID 或 Client Secret，请检查 Vercel 环境变量。",
+      error: "缺少店铺 Client ID 或 Client Secret，请检查 Vercel 环境变量。",
     };
   }
 
@@ -219,7 +219,7 @@ export async function refreshMercadoLibreTokenIfNeeded(): Promise<{
   } catch {
     return {
       token: null,
-      error: "Mercado Livre Brasil token 刷新失败，请重新授权或检查应用凭证。",
+      error: "巴西店铺 token 刷新失败，请重新授权或检查应用凭证。",
     };
   }
 }

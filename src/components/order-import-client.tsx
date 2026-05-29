@@ -59,7 +59,7 @@ type SystemField =
 
 type Mapping = Record<SystemField, string>;
 
-const mappingStorageKey = "Mercado Livre Brasil CSV Mapping";
+const mappingStorageKey = "Sonic Brazil CSV Mapping";
 
 const fieldConfigs: Array<{
   field: SystemField;
@@ -118,7 +118,7 @@ const fieldConfigs: Array<{
     field: "platform",
     label: "平台",
     required: false,
-    defaultText: "Mercado Livre Brasil",
+    defaultText: "Brazil Marketplace",
   },
   {
     field: "exchangeRateToUsd",
@@ -529,7 +529,7 @@ function buildOrder(
       orderNo,
       platform: toText(
         getMappedCell(headers, cells, mapping, "platform"),
-        "Mercado Livre Brasil",
+        "Brazil Marketplace",
       ),
       country: toText(getMappedCell(headers, cells, mapping, "country"), "Brazil"),
       currency: toText(

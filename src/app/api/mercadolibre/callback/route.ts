@@ -7,7 +7,7 @@ import {
 
 function htmlPage(title: string, message: string, status = 200) {
   return new NextResponse(
-    `<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><title>${title}</title></head><body style="font-family:Arial,'Microsoft YaHei',sans-serif;padding:32px;line-height:1.7;color:#0f172a"><h1>${title}</h1><p>${message}</p><p><a href="/mercadolibre">返回 Mercado Livre Brasil API 连接页</a></p></body></html>`,
+    `<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><title>${title}</title></head><body style="font-family:Arial,'Microsoft YaHei',sans-serif;padding:32px;line-height:1.7;color:#0f172a"><h1>${title}</h1><p>${message}</p><p><a href="/mercadolibre">返回 Sonic 订单同步设置页</a></p></body></html>`,
     {
       status,
       headers: {
@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
   const savedState = request.cookies.get("meli_oauth_state")?.value;
 
   if (!code) {
-    return htmlPage("授权失败", "Mercado Libre 未返回 code。", 400);
+    return htmlPage("授权失败", "授权页面未返回 code。", 400);
   }
 
   if (!state || !savedState || state !== savedState) {
@@ -44,7 +44,7 @@ export async function GET(request: NextRequest) {
   if (!config.clientSecret) {
     return htmlPage(
       "缺少 MELI_CLIENT_SECRET",
-      "缺少 MELI_CLIENT_SECRET。OAuth 代码已准备好，请先在 Vercel 环境变量中配置 Mercado Libre Client Secret。",
+      "缺少 MELI_CLIENT_SECRET。OAuth 代码已准备好，请先在 Vercel 环境变量中配置店铺 Client Secret。",
       500,
     );
   }
@@ -56,14 +56,14 @@ export async function GET(request: NextRequest) {
     if (result.error) {
       return htmlPage(
         "Token 保存失败",
-        `无法保存 Mercado Livre Brasil token：${result.error}。请确认 Supabase 已创建 mercadolibre_tokens 表和 RPC 函数。`,
+      `无法保存店铺授权 token：${result.error}。请确认 Supabase 已创建 mercadolibre_tokens 表和 RPC 函数。`,
         500,
       );
     }
 
     const response = htmlPage(
       "授权成功",
-      `Mercado Livre Brasil 授权成功，已保存 user_id：${token.user_id}。`,
+      `巴西店铺授权成功，已保存 user_id：${token.user_id}。`,
     );
 
     response.cookies.delete("meli_oauth_state");
@@ -72,7 +72,7 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     return htmlPage(
       "授权失败",
-      error instanceof Error ? error.message : "Mercado Libre OAuth 处理失败。",
+      error instanceof Error ? error.message : "店铺 OAuth 处理失败。",
       500,
     );
   }

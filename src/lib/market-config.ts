@@ -1,6 +1,6 @@
 ﻿export const marketConfig = {
   siteId: process.env.MELI_SITE || "MLB",
-  marketplaceName: "Mercado Livre Brasil",
+  marketplaceName: "Brazil Marketplace",
   countryName: "Brazil",
   countryNameLocal: "Brasil",
   localCurrency: "BRL",

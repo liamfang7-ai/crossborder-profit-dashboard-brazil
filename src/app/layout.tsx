@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Brazil ERP",
-  description: "Mercado Livre Brasil SKU Profit Dashboard",
+  title: "Sonic Crossborder Brazil Dashboard",
+  description: "Internal Brazil order profit dashboard for Sonic cross-border operations.",
 };
 
 export default function RootLayout({

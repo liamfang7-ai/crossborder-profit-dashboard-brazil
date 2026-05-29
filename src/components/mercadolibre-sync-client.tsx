@@ -76,7 +76,7 @@ export function MercadoLibreSyncClient() {
           <p className="mt-1">
             页数：{result.pages ?? 0}，跳过：{result.skipped ?? 0}。
           </p>
-          <p className="mt-1">请回到 Dashboard 查看 SKU 利润统计。</p>
+          <p className="mt-1">请回到 Sonic Dashboard 查看 SKU 利润统计。</p>
           {result.warnings && result.warnings.length > 0 ? (
             <ul className="mt-2 list-inside list-disc">
               {result.warnings.map((warning) => (

@@ -45,6 +45,10 @@ export async function middleware(request: NextRequest) {
       : NextResponse.next();
   }
 
+  if (pathname === "/about") {
+    return NextResponse.next();
+  }
+
   if (!isProtectedPage(pathname) && !isProtectedApi(pathname)) {
     return NextResponse.next();
   }
@@ -64,6 +68,7 @@ export const config = {
   matcher: [
     "/",
     "/login",
+    "/about",
     "/products/:path*",
     "/orders/:path*",
     "/mercadolibre/:path*",

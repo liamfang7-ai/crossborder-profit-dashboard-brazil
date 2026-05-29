@@ -64,8 +64,8 @@ const sortOptions: Array<{ value: SortKey; label: string }> = [
 
 function Navigation() {
   const links = [
-    ["Dashboard", "/"],
-    ["Mercado Livre Brasil API", "/mercadolibre"],
+    ["Sonic Dashboard", "/"],
+    ["Marketplace Integration", "/mercadolibre"],
     ["SKU 产品管理", "/products"],
     ["订单明细", "/orders"],
     ["备用 CSV 导入", "/import"],
@@ -290,7 +290,7 @@ export function DashboardClient({
             时间基准：São Paulo 时间 America/Sao_Paulo
           </p>
           <h1 className="mt-2 text-2xl font-semibold tracking-normal text-slate-950 sm:text-3xl">
-            跨境电商实时利润看板
+            Sonic 跨境巴西订单利润看板
           </h1>
           <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-slate-500">
             <span className="rounded-full bg-emerald-50 px-2.5 py-1 font-medium text-emerald-700">

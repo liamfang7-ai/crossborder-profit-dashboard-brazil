@@ -248,7 +248,7 @@ async function fetchMeliOrders(
     }
 
     if (!response.ok) {
-      warnings.push("Mercado Livre Brasil 订单接口请求失败。");
+      warnings.push("巴西店铺订单接口请求失败。");
       break;
     }
 
@@ -404,7 +404,7 @@ export async function POST(request: Request) {
 
     if (token.error || !token.accessToken || !token.userId) {
       return NextResponse.json(
-        { ok: false, error: token.error ?? "Mercado Livre Brasil 尚未连接。" },
+        { ok: false, error: token.error ?? "巴西店铺尚未连接。" },
         { status: 400 },
       );
     }
