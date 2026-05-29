@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "跨境电商实时利润看板",
-  description: "跨境电商订单、成本、利润和利润率实时统计后台",
+  title: "Brazil ERP",
+  description: "Mercado Livre Brasil SKU Profit Dashboard",
 };
 
 export default function RootLayout({

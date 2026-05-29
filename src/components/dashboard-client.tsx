@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
@@ -13,13 +13,13 @@ import {
   type SkuSummary,
 } from "@/lib/supabase";
 import {
-  formatMexicoTime,
-  getMexicoDateBounds,
-  getMexicoDateRange,
-  mexicoDateInputValue,
-  type MexicoRangeType,
-  validateMexicoCustomRange,
-} from "@/lib/mexico-time";
+  formatMarketTime,
+  getMarketDateBounds,
+  getMarketDateRange,
+  marketDateInputValue,
+  type MarketRangeType,
+  validateMarketCustomRange,
+} from "@/lib/market-time";
 
 type SortKey = "quantity" | "salesMxn" | "profitCny" | "profitMargin";
 
@@ -46,7 +46,7 @@ type Totals = {
   profitCny: number;
 };
 
-const rangeOptions: Array<{ value: MexicoRangeType; label: string }> = [
+const rangeOptions: Array<{ value: MarketRangeType; label: string }> = [
   { value: "today", label: "今日" },
   { value: "7d", label: "近7天" },
   { value: "month", label: "本月" },
@@ -65,7 +65,7 @@ const sortOptions: Array<{ value: SortKey; label: string }> = [
 function Navigation() {
   const links = [
     ["Dashboard", "/"],
-    ["Mercado Libre API", "/mercadolibre"],
+    ["Mercado Livre Brasil API", "/mercadolibre"],
     ["SKU 产品管理", "/products"],
     ["订单明细", "/orders"],
     ["备用 CSV 导入", "/import"],
@@ -99,18 +99,18 @@ export function DashboardClient({
   const [recentOrders, setRecentOrders] = useState(initialRecentOrders);
   const [orderCount, setOrderCount] = useState(initialOrderCount);
   const [exchangeRate, setExchangeRate] = useState(initialExchangeRate);
-  const [rangeType, setRangeType] = useState<MexicoRangeType>("month");
+  const [rangeType, setRangeType] = useState<MarketRangeType>("month");
   const [sortKey, setSortKey] = useState<SortKey>("quantity");
   const [customStartDate, setCustomStartDate] = useState(() =>
-    mexicoDateInputValue(new Date(initialRange.start)),
+    marketDateInputValue(new Date(initialRange.start)),
   );
   const [customEndDate, setCustomEndDate] = useState(() =>
-    mexicoDateInputValue(new Date(initialRange.end)),
+    marketDateInputValue(new Date(initialRange.end)),
   );
   const [pendingStartDate, setPendingStartDate] = useState(customStartDate);
   const [pendingEndDate, setPendingEndDate] = useState(customEndDate);
   const [dateBounds] = useState(() =>
-    getMexicoDateBounds(new Date(initialRange.end)),
+    getMarketDateBounds(new Date(initialRange.end)),
   );
   const [dateRangeError, setDateRangeError] = useState("");
   const [showFeeDetails, setShowFeeDetails] = useState(false);
@@ -122,7 +122,7 @@ export function DashboardClient({
   const [syncStatus, setSyncStatus] = useState("实时同步中");
 
   const selectedRange = useMemo(
-    () => getMexicoDateRange(rangeType, customStartDate, customEndDate),
+    () => getMarketDateRange(rangeType, customStartDate, customEndDate),
     [customEndDate, customStartDate, rangeType],
   );
   const queryFilters = useMemo<OrdersRangeQuery>(
@@ -157,7 +157,7 @@ export function DashboardClient({
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
-      setLastUpdatedText(formatMexicoTime(lastUpdatedAt));
+      setLastUpdatedText(formatMarketTime(lastUpdatedAt));
     }, 0);
 
     return () => window.clearTimeout(timer);
@@ -254,7 +254,7 @@ export function DashboardClient({
       ? `当前筛选：${customStartDate} 至 ${customEndDate}`
       : "";
 
-  function applyQuickRange(value: MexicoRangeType) {
+  function applyQuickRange(value: MarketRangeType) {
     if (value === "custom") {
       setRangeType("custom");
       return;
@@ -265,7 +265,7 @@ export function DashboardClient({
   }
 
   function applyCustomRange() {
-    const validation = validateMexicoCustomRange(
+    const validation = validateMarketCustomRange(
       pendingStartDate,
       pendingEndDate,
       new Date(),
@@ -287,7 +287,7 @@ export function DashboardClient({
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 px-4 py-6 sm:px-6 lg:px-8">
         <header className="rounded-lg border border-slate-200 bg-white px-5 py-5 shadow-sm shadow-slate-200/60">
           <p className="text-sm font-medium text-slate-500">
-            时间基准：墨西哥城时间 America/Mexico_City
+            时间基准：São Paulo 时间 America/Sao_Paulo
           </p>
           <h1 className="mt-2 text-2xl font-semibold tracking-normal text-slate-950 sm:text-3xl">
             跨境电商实时利润看板
@@ -384,7 +384,7 @@ export function DashboardClient({
                 </select>
               </label>
               <div className="rounded-lg bg-slate-50 px-4 py-3 text-sm text-slate-500">
-                当前汇率：1 MXN = {exchangeRate} CNY
+                当前汇率：1 BRL = {exchangeRate} CNY
               </div>
             </div>
             {isLoading ? (
@@ -412,7 +412,7 @@ export function DashboardClient({
 
         <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           <MetricCard title="订单数" value={`${totals.orderCount} 单`} />
-          <MetricCard title="销售额 MXN" value={formatCurrency(totals.salesMxn, "MXN")} />
+          <MetricCard title="销售额 BRL" value={formatCurrency(totals.salesMxn, "BRL")} />
           <MetricCard title="折算销售额 CNY" value={formatCurrency(totals.salesCny, "CNY")} />
           <MetricCard title="商品成本 CNY" value={formatCurrency(totals.productCostCny, "CNY")} tone="cost" />
           <MetricCard title="头程物流 CNY" value={formatCurrency(totals.shippingCostCny, "CNY")} tone="cost" />
@@ -441,7 +441,7 @@ export function DashboardClient({
                   <th className="px-4 py-3">产品名称</th>
                   <th className="px-4 py-3">订单数</th>
                   <th className="px-4 py-3">出单件数</th>
-                  <th className="px-4 py-3">销售额 MXN</th>
+                  <th className="px-4 py-3">销售额 BRL</th>
                   <th className="px-4 py-3">销售额 CNY</th>
                   <th className="px-4 py-3">商品成本 CNY</th>
                   <th className="px-4 py-3">头程物流 CNY</th>
@@ -475,7 +475,7 @@ export function DashboardClient({
                       <td className="min-w-[220px] px-4 py-3">{sku.productName}</td>
                       <td className="whitespace-nowrap px-4 py-3">{sku.orderCount}</td>
                       <td className="whitespace-nowrap px-4 py-3">{sku.quantity}</td>
-                      <td className="whitespace-nowrap px-4 py-3">{formatCurrency(sku.salesMxn, "MXN")}</td>
+                      <td className="whitespace-nowrap px-4 py-3">{formatCurrency(sku.salesMxn, "BRL")}</td>
                       <td className="whitespace-nowrap px-4 py-3">{formatCurrency(sku.salesCny, "CNY")}</td>
                       <td className="whitespace-nowrap px-4 py-3">{formatCurrency(sku.productCostCny, "CNY")}</td>
                       <td className="whitespace-nowrap px-4 py-3">{formatCurrency(sku.shippingCostCny, "CNY")}</td>
@@ -508,11 +508,11 @@ export function DashboardClient({
                 <thead className="bg-slate-50 text-left text-xs font-semibold text-slate-500">
                   <tr>
                     <th className="px-4 py-3">SKU</th>
-                    <th className="px-4 py-3">平台佣金 MXN / CNY</th>
-                    <th className="px-4 py-3">平台税费 MXN / CNY</th>
-                    <th className="px-4 py-3">尾端派送费 MXN / CNY</th>
-                    <th className="px-4 py-3">广告费 MXN / CNY</th>
-                    <th className="px-4 py-3">其他费用 MXN / CNY</th>
+                    <th className="px-4 py-3">平台佣金 BRL / CNY</th>
+                    <th className="px-4 py-3">平台税费 BRL / CNY</th>
+                    <th className="px-4 py-3">尾端派送费 BRL / CNY</th>
+                    <th className="px-4 py-3">广告费 BRL / CNY</th>
+                    <th className="px-4 py-3">其他费用 BRL / CNY</th>
                     <th className="px-4 py-3">公式状态</th>
                   </tr>
                 </thead>
@@ -520,11 +520,11 @@ export function DashboardClient({
                   {sortedSkus.map((sku) => (
                     <tr key={sku.sku}>
                       <td className="px-4 py-3 font-medium text-slate-950">{sku.sku}</td>
-                      <td className="px-4 py-3">{formatCurrency(sku.platformFeeMxn, "MXN")} / {formatCurrency(sku.platformFeeMxn * exchangeRate, "CNY")}</td>
-                      <td className="px-4 py-3">{formatCurrency(sku.platformTaxMxn, "MXN")} / {formatCurrency(sku.platformTaxMxn * exchangeRate, "CNY")}</td>
-                      <td className="px-4 py-3">{formatCurrency(sku.lastMileFeeMxn, "MXN")} / {formatCurrency(sku.lastMileFeeMxn * exchangeRate, "CNY")}</td>
-                      <td className="px-4 py-3">{formatCurrency(sku.adCostMxn, "MXN")} / {formatCurrency(sku.adCostMxn * exchangeRate, "CNY")}</td>
-                      <td className="px-4 py-3">{formatCurrency(sku.otherFeeMxn, "MXN")} / {formatCurrency(sku.otherFeeMxn * exchangeRate, "CNY")}</td>
+                      <td className="px-4 py-3">{formatCurrency(sku.platformFeeMxn, "BRL")} / {formatCurrency(sku.platformFeeMxn * exchangeRate, "CNY")}</td>
+                      <td className="px-4 py-3">{formatCurrency(sku.platformTaxMxn, "BRL")} / {formatCurrency(sku.platformTaxMxn * exchangeRate, "CNY")}</td>
+                      <td className="px-4 py-3">{formatCurrency(sku.lastMileFeeMxn, "BRL")} / {formatCurrency(sku.lastMileFeeMxn * exchangeRate, "CNY")}</td>
+                      <td className="px-4 py-3">{formatCurrency(sku.adCostMxn, "BRL")} / {formatCurrency(sku.adCostMxn * exchangeRate, "CNY")}</td>
+                      <td className="px-4 py-3">{formatCurrency(sku.otherFeeMxn, "BRL")} / {formatCurrency(sku.otherFeeMxn * exchangeRate, "CNY")}</td>
                       <td className="px-4 py-3">
                         {sku.formulaErrors.length === 0 ? (
                           <span className="rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-700">正常</span>

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
@@ -9,15 +9,15 @@ import {
   type OrdersRangeQuery,
 } from "@/lib/supabase";
 import {
-  formatMexicoDateTime,
-  getMexicoDateBounds,
-  getMexicoDateRange,
-  type MexicoRangeType,
-  mexicoDateInputValue,
-  validateMexicoCustomRange,
-} from "@/lib/mexico-time";
+  formatMarketDateTime,
+  getMarketDateBounds,
+  getMarketDateRange,
+  type MarketRangeType,
+  marketDateInputValue,
+  validateMarketCustomRange,
+} from "@/lib/market-time";
 
-const rangeOptions: Array<{ value: MexicoRangeType; label: string }> = [
+const rangeOptions: Array<{ value: MarketRangeType; label: string }> = [
   { value: "today", label: "今日" },
   { value: "month", label: "本月" },
   { value: "7d", label: "近 7 天" },
@@ -34,17 +34,17 @@ type OrdersDetailClientProps = {
 };
 
 export function OrdersDetailClient({ initialRange }: OrdersDetailClientProps) {
-  const [rangeType, setRangeType] = useState<MexicoRangeType>("month");
+  const [rangeType, setRangeType] = useState<MarketRangeType>("month");
   const [customStartDate, setCustomStartDate] = useState(() =>
-    mexicoDateInputValue(new Date(initialRange.start)),
+    marketDateInputValue(new Date(initialRange.start)),
   );
   const [customEndDate, setCustomEndDate] = useState(() =>
-    mexicoDateInputValue(new Date(initialRange.end)),
+    marketDateInputValue(new Date(initialRange.end)),
   );
   const [pendingStartDate, setPendingStartDate] = useState(customStartDate);
   const [pendingEndDate, setPendingEndDate] = useState(customEndDate);
   const [dateBounds] = useState(() =>
-    getMexicoDateBounds(new Date(initialRange.end)),
+    getMarketDateBounds(new Date(initialRange.end)),
   );
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
@@ -55,7 +55,7 @@ export function OrdersDetailClient({ initialRange }: OrdersDetailClientProps) {
   const [isLoading, setIsLoading] = useState(false);
 
   const range = useMemo(
-    () => getMexicoDateRange(rangeType, customStartDate, customEndDate),
+    () => getMarketDateRange(rangeType, customStartDate, customEndDate),
     [customEndDate, customStartDate, rangeType],
   );
   const query = useMemo<OrdersRangeQuery>(
@@ -101,7 +101,7 @@ export function OrdersDetailClient({ initialRange }: OrdersDetailClientProps) {
     return () => window.clearTimeout(timer);
   }, [loadRows]);
 
-  function applyQuickRange(value: MexicoRangeType) {
+  function applyQuickRange(value: MarketRangeType) {
     if (value === "custom") {
       setRangeType("custom");
       return;
@@ -113,7 +113,7 @@ export function OrdersDetailClient({ initialRange }: OrdersDetailClientProps) {
   }
 
   function applyCustomRange() {
-    const validation = validateMexicoCustomRange(
+    const validation = validateMarketCustomRange(
       pendingStartDate,
       pendingEndDate,
       new Date(),
@@ -138,7 +138,7 @@ export function OrdersDetailClient({ initialRange }: OrdersDetailClientProps) {
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <p className="text-sm font-medium text-slate-500">
-                时间基准：墨西哥城时间 America/Mexico_City
+                时间基准：São Paulo 时间 America/Sao_Paulo
               </p>
               <h1 className="mt-2 text-2xl font-semibold tracking-normal text-slate-950 sm:text-3xl">
                 订单明细
@@ -266,7 +266,7 @@ export function OrdersDetailClient({ initialRange }: OrdersDetailClientProps) {
                   <th className="px-4 py-3">SKU</th>
                   <th className="px-4 py-3">产品名称</th>
                   <th className="px-4 py-3">数量</th>
-                  <th className="px-4 py-3">销售额 MXN</th>
+                  <th className="px-4 py-3">销售额 BRL</th>
                   <th className="px-4 py-3">销售额 CNY</th>
                   <th className="px-4 py-3">汇率</th>
                   <th className="px-4 py-3">平台</th>
@@ -283,12 +283,12 @@ export function OrdersDetailClient({ initialRange }: OrdersDetailClientProps) {
                   rows.map((row) => (
                     <tr key={`${row.orderNo}-${row.sku}-${row.orderedAt}`} className="hover:bg-slate-50/80">
                       <td className="whitespace-nowrap px-4 py-3 font-medium text-slate-950">{row.orderNo}</td>
-                      <td className="whitespace-nowrap px-4 py-3">{formatMexicoDateTime(new Date(row.orderedAt))}</td>
+                      <td className="whitespace-nowrap px-4 py-3">{formatMarketDateTime(new Date(row.orderedAt))}</td>
                       <td className="whitespace-nowrap px-4 py-3">{row.status}</td>
                       <td className="whitespace-nowrap px-4 py-3">{row.sku}</td>
                       <td className="min-w-[220px] px-4 py-3">{row.productName}</td>
                       <td className="whitespace-nowrap px-4 py-3">{row.quantity}</td>
-                      <td className="whitespace-nowrap px-4 py-3">{formatCurrency(row.salesMxn, "MXN")}</td>
+                      <td className="whitespace-nowrap px-4 py-3">{formatCurrency(row.salesMxn, "BRL")}</td>
                       <td className="whitespace-nowrap px-4 py-3">{formatCurrency(row.salesCny, "CNY")}</td>
                       <td className="whitespace-nowrap px-4 py-3">{row.exchangeRate}</td>
                       <td className="whitespace-nowrap px-4 py-3">{row.platform}</td>

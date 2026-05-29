@@ -1,6 +1,6 @@
-const mexicoTimeZone = "America/Mexico_City";
+import { timezone } from "@/lib/market-config";
 
-export type MexicoRangeType =
+export type MarketRangeType =
   | "today"
   | "7d"
   | "month"
@@ -8,9 +8,9 @@ export type MexicoRangeType =
   | "90d"
   | "custom";
 
-function getMexicoParts(date: Date) {
+function getMarketParts(date: Date) {
   const parts = new Intl.DateTimeFormat("en-CA", {
-    timeZone: mexicoTimeZone,
+    timeZone: timezone,
     year: "numeric",
     month: "2-digit",
     day: "2-digit",
@@ -32,7 +32,7 @@ function getMexicoParts(date: Date) {
   };
 }
 
-function mexicoLocalToUtc(
+function marketLocalToUtc(
   year: number,
   month: number,
   day: number,
@@ -41,23 +41,23 @@ function mexicoLocalToUtc(
   second = 0,
 ) {
   const utcGuess = Date.UTC(year, month - 1, day, hour, minute, second);
-  const mexicoParts = getMexicoParts(new Date(utcGuess));
-  const mexicoAsUtc = Date.UTC(
-    mexicoParts.year,
-    mexicoParts.month - 1,
-    mexicoParts.day,
-    mexicoParts.hour,
-    mexicoParts.minute,
-    mexicoParts.second,
+  const marketParts = getMarketParts(new Date(utcGuess));
+  const marketAsUtc = Date.UTC(
+    marketParts.year,
+    marketParts.month - 1,
+    marketParts.day,
+    marketParts.hour,
+    marketParts.minute,
+    marketParts.second,
   );
-  const offset = mexicoAsUtc - utcGuess;
+  const offset = marketAsUtc - utcGuess;
 
   return new Date(utcGuess - offset);
 }
 
-export function formatMexicoTime(date: Date) {
+export function formatMarketTime(date: Date) {
   return new Intl.DateTimeFormat("zh-CN", {
-    timeZone: mexicoTimeZone,
+    timeZone: timezone,
     hour: "2-digit",
     minute: "2-digit",
     second: "2-digit",
@@ -65,9 +65,9 @@ export function formatMexicoTime(date: Date) {
   }).format(date);
 }
 
-export function formatMexicoDateTime(date: Date) {
+export function formatMarketDateTime(date: Date) {
   return new Intl.DateTimeFormat("zh-CN", {
-    timeZone: mexicoTimeZone,
+    timeZone: timezone,
     year: "numeric",
     month: "2-digit",
     day: "2-digit",
@@ -78,52 +78,52 @@ export function formatMexicoDateTime(date: Date) {
   }).format(date);
 }
 
-export function mexicoDateInputValue(date: Date) {
-  const parts = getMexicoParts(date);
+export function marketDateInputValue(date: Date) {
+  const parts = getMarketParts(date);
 
   return `${parts.year}-${String(parts.month).padStart(2, "0")}-${String(
     parts.day,
   ).padStart(2, "0")}`;
 }
 
-export function mexicoDateInputToStart(value: string) {
+export function marketDateInputToStart(value: string) {
   const [year, month, day] = value.split("-").map(Number);
 
-  return mexicoLocalToUtc(year, month, day, 0, 0, 0);
+  return marketLocalToUtc(year, month, day, 0, 0, 0);
 }
 
-export function mexicoDateInputToEnd(value: string) {
+export function marketDateInputToEnd(value: string) {
   const [year, month, day] = value.split("-").map(Number);
 
-  return mexicoLocalToUtc(year, month, day, 23, 59, 59);
+  return marketLocalToUtc(year, month, day, 23, 59, 59);
 }
 
-export function getMexicoDateRange(
-  rangeType: MexicoRangeType,
+export function getMarketDateRange(
+  rangeType: MarketRangeType,
   customStartDate: string,
   customEndDate: string,
 ) {
   const now = new Date();
-  const mexicoNow = getMexicoParts(now);
+  const marketNow = getMarketParts(now);
 
   if (rangeType === "today") {
     return {
-      start: mexicoLocalToUtc(mexicoNow.year, mexicoNow.month, mexicoNow.day),
+      start: marketLocalToUtc(marketNow.year, marketNow.month, marketNow.day),
       end: now,
     };
   }
 
   if (rangeType === "month") {
     return {
-      start: mexicoLocalToUtc(mexicoNow.year, mexicoNow.month, 1),
+      start: marketLocalToUtc(marketNow.year, marketNow.month, 1),
       end: now,
     };
   }
 
   if (rangeType === "custom") {
     return {
-      start: mexicoDateInputToStart(customStartDate),
-      end: mexicoDateInputToEnd(customEndDate),
+      start: marketDateInputToStart(customStartDate),
+      end: marketDateInputToEnd(customEndDate),
     };
   }
 
@@ -136,23 +136,23 @@ export function getMexicoDateRange(
   };
 }
 
-export function getDefaultMexicoMonthRange() {
+export function getDefaultMarketMonthRange() {
   const now = new Date();
-  const mexicoNow = getMexicoParts(now);
+  const marketNow = getMarketParts(now);
 
   return {
-    start: mexicoLocalToUtc(mexicoNow.year, mexicoNow.month, 1).toISOString(),
+    start: marketLocalToUtc(marketNow.year, marketNow.month, 1).toISOString(),
     end: now.toISOString(),
   };
 }
 
-export function getMexicoRetentionCutoff(days = 90) {
+export function getMarketRetentionCutoff(days = 90) {
   const now = new Date();
-  const mexicoNow = getMexicoParts(now);
-  const startOfToday = mexicoLocalToUtc(
-    mexicoNow.year,
-    mexicoNow.month,
-    mexicoNow.day,
+  const marketNow = getMarketParts(now);
+  const startOfToday = marketLocalToUtc(
+    marketNow.year,
+    marketNow.month,
+    marketNow.day,
   );
 
   startOfToday.setUTCDate(startOfToday.getUTCDate() - days);
@@ -160,22 +160,22 @@ export function getMexicoRetentionCutoff(days = 90) {
   return startOfToday;
 }
 
-export function getMexicoDateBounds(referenceDate = new Date()) {
-  const maxDate = mexicoDateInputValue(referenceDate);
-  const minDateValue = getMexicoRetentionCutoff(90);
+export function getMarketDateBounds(referenceDate = new Date()) {
+  const maxDate = marketDateInputValue(referenceDate);
+  const minDateValue = getMarketRetentionCutoff(90);
 
   return {
-    minDate: mexicoDateInputValue(minDateValue),
+    minDate: marketDateInputValue(minDateValue),
     maxDate,
   };
 }
 
-export function validateMexicoCustomRange(
+export function validateMarketCustomRange(
   startDate: string,
   endDate: string,
   referenceDate = new Date(),
 ) {
-  const { minDate, maxDate } = getMexicoDateBounds(referenceDate);
+  const { minDate, maxDate } = getMarketDateBounds(referenceDate);
 
   if (
     !startDate ||

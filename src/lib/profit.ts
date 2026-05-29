@@ -8,7 +8,8 @@ export type ProfitInput = {
   adCost: number;
   refundAmount: number;
   otherFee: number;
-  exchangeRateMxnToCny: number;
+  exchangeRateBrlToCny?: number;
+  exchangeRateMxnToCny?: number;
 };
 
 export type ProfitResult = {
@@ -17,19 +18,20 @@ export type ProfitResult = {
 };
 
 export function calculateProfit(order: ProfitInput): ProfitResult {
-  const revenueCny = order.revenue * order.exchangeRateMxnToCny;
-  const mexicoFeesCny =
+  const exchangeRate = order.exchangeRateBrlToCny ?? order.exchangeRateMxnToCny ?? 0;
+  const revenueCny = order.revenue * exchangeRate;
+  const localFeesCny =
     (order.lastMileFee +
       order.platformFee +
       order.platformTax +
       order.adCost +
       order.otherFee) *
-    order.exchangeRateMxnToCny;
+    exchangeRate;
   const profit =
     revenueCny -
     order.productCost -
     order.shippingCost -
-    mexicoFeesCny;
+    localFeesCny;
 
   return {
     profit,

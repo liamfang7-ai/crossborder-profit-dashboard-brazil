@@ -1,6 +1,11 @@
-import { NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
+import {
+  countryName,
+  localCurrency,
+  marketplaceName,
+} from "@/lib/market-config";
 import { getValidMercadoLibreAccessToken } from "@/lib/mercadolibre";
-import { getMexicoDateRange } from "@/lib/mexico-time";
+import { getMarketDateRange } from "@/lib/market-time";
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
 
 type SyncRequest = {
@@ -124,10 +129,10 @@ function mapMeliOrder(order: MeliOrder): OrderPayload | null {
     order.date_created || order.date_closed || new Date().toISOString();
 
   return {
-    order_no: `MLM-${order.id}`,
-    platform: "Mercado Libre MX",
-    country: "MX",
-    currency: order.currency_id || "MXN",
+    order_no: `MLB-${order.id}`,
+    platform: marketplaceName,
+    country: countryName,
+    currency: order.currency_id || localCurrency,
     revenue,
     ordered_at: new Date(orderedAt).toISOString(),
     status: order.status || "unknown",
@@ -145,7 +150,7 @@ function mapMeliOrder(order: MeliOrder): OrderPayload | null {
 }
 
 function getOrderNo(order: MeliOrder) {
-  return order.id ? `MLM-${order.id}` : "";
+  return order.id ? `MLB-${order.id}` : "";
 }
 
 function getOrderedAt(order: MeliOrder) {
@@ -186,9 +191,9 @@ function mapMeliOrderItems(order: MeliOrder): OrderItemPayload[] {
     return {
       sync_key: `${orderNo}:${meliItemId}:${variationId}`,
       order_no: orderNo,
-      platform: "Mercado Libre MX",
-      country: "MX",
-      currency: order.currency_id || "MXN",
+      platform: marketplaceName,
+      country: countryName,
+      currency: order.currency_id || localCurrency,
       sku,
       product_name: productName,
       image_url:
@@ -243,7 +248,7 @@ async function fetchMeliOrders(
     }
 
     if (!response.ok) {
-      warnings.push("Mercado Libre 订单接口请求失败。");
+      warnings.push("Mercado Livre Brasil 订单接口请求失败。");
       break;
     }
 
@@ -399,7 +404,7 @@ export async function POST(request: Request) {
 
     if (token.error || !token.accessToken || !token.userId) {
       return NextResponse.json(
-        { ok: false, error: token.error ?? "Mercado Libre 尚未连接。" },
+        { ok: false, error: token.error ?? "Mercado Livre Brasil 尚未连接。" },
         { status: 400 },
       );
     }
@@ -420,8 +425,8 @@ export async function POST(request: Request) {
 
     const range =
       days <= 1
-        ? getMexicoDateRange("today", "", "")
-        : getMexicoDateRange("7d", "", "");
+        ? getMarketDateRange("today", "", "")
+        : getMarketDateRange("7d", "", "");
     const startTime = range.start.getTime();
     const endTime = range.end.getTime();
     const inRange = (order: MeliOrder) => {

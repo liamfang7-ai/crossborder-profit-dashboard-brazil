@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+﻿import { NextRequest, NextResponse } from "next/server";
 import {
   exchangeMercadoLibreCode,
   getMercadoLibreConfig,
@@ -7,7 +7,7 @@ import {
 
 function htmlPage(title: string, message: string, status = 200) {
   return new NextResponse(
-    `<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><title>${title}</title></head><body style="font-family:Arial,'Microsoft YaHei',sans-serif;padding:32px;line-height:1.7;color:#0f172a"><h1>${title}</h1><p>${message}</p><p><a href="/mercadolibre">返回 Mercado Libre API 连接页</a></p></body></html>`,
+    `<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><title>${title}</title></head><body style="font-family:Arial,'Microsoft YaHei',sans-serif;padding:32px;line-height:1.7;color:#0f172a"><h1>${title}</h1><p>${message}</p><p><a href="/mercadolibre">返回 Mercado Livre Brasil API 连接页</a></p></body></html>`,
     {
       status,
       headers: {
@@ -56,14 +56,14 @@ export async function GET(request: NextRequest) {
     if (result.error) {
       return htmlPage(
         "Token 保存失败",
-        `无法保存 Mercado Libre token：${result.error}。请确认 Supabase 已创建 mercadolibre_tokens 表和 RPC 函数。`,
+        `无法保存 Mercado Livre Brasil token：${result.error}。请确认 Supabase 已创建 mercadolibre_tokens 表和 RPC 函数。`,
         500,
       );
     }
 
     const response = htmlPage(
       "授权成功",
-      `Mercado Libre 授权成功，已保存 user_id：${token.user_id}。`,
+      `Mercado Livre Brasil 授权成功，已保存 user_id：${token.user_id}。`,
     );
 
     response.cookies.delete("meli_oauth_state");

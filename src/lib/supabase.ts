@@ -1,4 +1,8 @@
-import { createClient } from "@supabase/supabase-js";
+﻿import { createClient } from "@supabase/supabase-js";
+import {
+  exchangeRateSettingKey,
+  legacyExchangeRateSettingKey,
+} from "./market-config";
 import { calculateProfit } from "./profit";
 import { safeFormula } from "./safe-formula";
 
@@ -432,10 +436,28 @@ export async function getGlobalExchangeRate(): Promise<{
   const { data, error } = await supabase
     .from("app_settings")
     .select("value")
-    .eq("key", "exchange_rate_mxn_to_cny")
+    .eq("key", exchangeRateSettingKey)
     .maybeSingle();
 
   if (error) {
+    const legacy = await supabase
+      .from("app_settings")
+      .select("value")
+      .eq("key", legacyExchangeRateSettingKey)
+      .maybeSingle();
+
+    if (!legacy.error) {
+      const legacyParsed = Number(legacy.data?.value);
+
+      return {
+        value:
+          Number.isFinite(legacyParsed) && legacyParsed > 0
+            ? legacyParsed
+            : 0.42,
+        error: null,
+      };
+    }
+
     return {
       value: 0.42,
       error: error.message,
@@ -539,9 +561,12 @@ export async function getSkuDashboardDataResult(
     skuSummaries: Array.from(summaries.values()).map((summary) => {
       const product = productsBySku.get(summary.sku);
       const variables = {
+        sales_brl: summary.salesMxn,
         sales_mxn: summary.salesMxn,
         quantity: summary.quantity,
         order_count: summary.orderCount,
+        unit_price_brl:
+          summary.quantity > 0 ? summary.salesMxn / summary.quantity : 0,
         unit_price_mxn:
           summary.quantity > 0 ? summary.salesMxn / summary.quantity : 0,
         exchange_rate: exchangeRateResult.value,

@@ -1,9 +1,11 @@
-export type FormulaVariables = {
-  sales_mxn: number;
+﻿export type FormulaVariables = {
+  sales_brl: number;
   quantity: number;
   order_count: number;
-  unit_price_mxn: number;
+  unit_price_brl: number;
   exchange_rate: number;
+  sales_mxn?: number;
+  unit_price_mxn?: number;
 };
 
 export type FormulaResult = {
@@ -12,11 +14,13 @@ export type FormulaResult = {
 };
 
 const allowedVariables = new Set([
-  "sales_mxn",
+  "sales_brl",
   "quantity",
   "order_count",
-  "unit_price_mxn",
+  "unit_price_brl",
   "exchange_rate",
+  "sales_mxn",
+  "unit_price_mxn",
 ]);
 
 function tokenize(formula: string) {
@@ -164,7 +168,14 @@ export function safeFormula(
 
     toRpn(tokenize(trimmed)).forEach((token) => {
       if (allowedVariables.has(token)) {
-        stack.push(variables[token as keyof FormulaVariables]);
+        const value =
+          token === "sales_mxn"
+            ? variables.sales_mxn ?? variables.sales_brl
+            : token === "unit_price_mxn"
+              ? variables.unit_price_mxn ?? variables.unit_price_brl
+              : variables[token as keyof FormulaVariables];
+
+        stack.push(value ?? 0);
         return;
       }
 

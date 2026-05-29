@@ -1,5 +1,6 @@
-import "server-only";
+﻿import "server-only";
 
+import { siteId } from "@/lib/market-config";
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
 
 export type MercadoLibreConfig = {
@@ -42,7 +43,7 @@ export type MercadoLibreConnectionStatus = {
   error: string | null;
 };
 
-const authorizationUrl = "https://auth.mercadolibre.com.mx/authorization";
+const authorizationUrl = "https://auth.mercadolivre.com.br/authorization";
 const tokenUrl = "https://api.mercadolibre.com/oauth/token";
 
 export function getMercadoLibreConfigStatus(): MercadoLibreConfigStatus {
@@ -50,7 +51,7 @@ export function getMercadoLibreConfigStatus(): MercadoLibreConfigStatus {
     clientId: Boolean(process.env.MELI_CLIENT_ID),
     clientSecret: Boolean(process.env.MELI_CLIENT_SECRET),
     redirectUri: Boolean(process.env.MELI_REDIRECT_URI),
-    site: process.env.MELI_SITE || "MLM",
+    site: siteId,
   };
 }
 
@@ -59,7 +60,7 @@ export function getMercadoLibreConfig(): MercadoLibreConfig {
     clientId: process.env.MELI_CLIENT_ID || "",
     clientSecret: process.env.MELI_CLIENT_SECRET || "",
     redirectUri: process.env.MELI_REDIRECT_URI || "",
-    site: process.env.MELI_SITE || "MLM",
+    site: siteId,
   };
 }
 
@@ -89,7 +90,7 @@ async function requestMercadoLibreToken(body: URLSearchParams) {
     const message =
       typeof payload?.message === "string"
         ? payload.message
-        : "Mercado Libre token request failed.";
+        : "Mercado Livre Brasil token request failed.";
 
     throw new Error(message);
   }
@@ -218,7 +219,7 @@ export async function refreshMercadoLibreTokenIfNeeded(): Promise<{
   } catch {
     return {
       token: null,
-      error: "Mercado Libre token 刷新失败，请重新授权或检查应用凭证。",
+      error: "Mercado Livre Brasil token 刷新失败，请重新授权或检查应用凭证。",
     };
   }
 }

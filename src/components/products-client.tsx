@@ -1,7 +1,12 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import {
+  exchangeRateLabel,
+  exchangeRateSettingKey,
+  legacyExchangeRateSettingKey,
+} from "@/lib/market-config";
 import { formatCurrency } from "@/lib/profit";
 import { safeFormula } from "@/lib/safe-formula";
 import { supabase, type ProductRow } from "@/lib/supabase";
@@ -26,10 +31,10 @@ const emptyForm: ProductForm = {
   imageUrl: "",
   unitCostCny: "0",
   unitShippingCostCny: "0",
-  platformFeeFormulaMxn: "sales_mxn * 0.13",
-  platformTaxFormulaMxn: "sales_mxn * 0.04",
+  platformFeeFormulaMxn: "sales_brl * 0.13",
+  platformTaxFormulaMxn: "sales_brl * 0.04",
   lastMileFeeFormulaMxn: "quantity * 45",
-  adCostFormulaMxn: "sales_mxn * 0.05",
+  adCostFormulaMxn: "sales_brl * 0.05",
   otherFeeFormulaMxn: "0",
   isActive: true,
 };
@@ -45,11 +50,11 @@ const formulaFields: Array<{
   >;
   label: string;
 }> = [
-  { key: "platformFeeFormulaMxn", label: "平台佣金公式（MXN）" },
-  { key: "platformTaxFormulaMxn", label: "平台税费公式（MXN）" },
-  { key: "lastMileFeeFormulaMxn", label: "尾端派送费公式（MXN）" },
-  { key: "adCostFormulaMxn", label: "广告费公式（MXN）" },
-  { key: "otherFeeFormulaMxn", label: "其他费用公式（MXN）" },
+  { key: "platformFeeFormulaMxn", label: "平台佣金公式（BRL）" },
+  { key: "platformTaxFormulaMxn", label: "平台税费公式（BRL）" },
+  { key: "lastMileFeeFormulaMxn", label: "尾端派送费公式（BRL）" },
+  { key: "adCostFormulaMxn", label: "广告费公式（BRL）" },
+  { key: "otherFeeFormulaMxn", label: "其他费用公式（BRL）" },
 ];
 
 function toMoney(value: string) {
@@ -83,9 +88,11 @@ function productToForm(product: ProductRow): ProductForm {
 function validateFormulas(form: ProductForm) {
   const errors: string[] = [];
   const variables = {
+    sales_brl: 1000,
     sales_mxn: 1000,
     quantity: 3,
     order_count: 2,
+    unit_price_brl: 333.33,
     unit_price_mxn: 333.33,
     exchange_rate: 0.42,
   };
@@ -145,7 +152,7 @@ export function ProductsClient() {
       supabase
         .from("app_settings")
         .select("value")
-        .eq("key", "exchange_rate_mxn_to_cny")
+        .eq("key", exchangeRateSettingKey)
         .maybeSingle(),
     ]);
 
@@ -158,6 +165,16 @@ export function ProductsClient() {
 
     if (!settingsResult.error && settingsResult.data?.value) {
       setExchangeRate(String(settingsResult.data.value));
+    } else {
+      const legacyResult = await supabase
+        .from("app_settings")
+        .select("value")
+        .eq("key", legacyExchangeRateSettingKey)
+        .maybeSingle();
+
+      if (!legacyResult.error && legacyResult.data?.value) {
+        setExchangeRate(String(legacyResult.data.value));
+      }
     }
 
     setIsLoading(false);
@@ -177,14 +194,14 @@ export function ProductsClient() {
     const value = toMoney(exchangeRate);
 
     if (value === null || value <= 0) {
-      setError("MXN → CNY 汇率必须是大于 0 的数字。");
+      setError("BRL → CNY 汇率必须是大于 0 的数字。");
       return;
     }
 
     setIsSavingRate(true);
     const { error: saveError } = await supabase.from("app_settings").upsert(
       {
-        key: "exchange_rate_mxn_to_cny",
+        key: exchangeRateSettingKey,
         value: String(value),
       },
       { onConflict: "key" },
@@ -283,7 +300,7 @@ export function ProductsClient() {
                 SKU 产品管理
               </h1>
               <p className="mt-2 text-sm text-slate-500">
-                成本和费用集中在这里维护。商品成本、头程物流成本按 CNY 填写；佣金、税费、尾端派送、广告和其他费用按 MXN 公式计算。
+                成本和费用集中在这里维护。商品成本、头程物流成本按 CNY 填写；佣金、税费、尾端派送、广告和其他费用按 BRL 公式计算。
               </p>
             </div>
             <Link
@@ -299,7 +316,7 @@ export function ProductsClient() {
           <h2 className="text-base font-semibold text-slate-950">汇率设置</h2>
           <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-end">
             <label className="grid gap-2 text-sm sm:w-64">
-              <span className="font-medium text-slate-700">MXN → CNY 汇率</span>
+              <span className="font-medium text-slate-700">{exchangeRateLabel}</span>
               <input
                 value={exchangeRate}
                 inputMode="decimal"
@@ -414,7 +431,7 @@ export function ProductsClient() {
                 </label>
               ))}
               <p className="rounded-lg bg-slate-50 px-4 py-3 text-xs leading-5 text-slate-500">
-                公式变量：sales_mxn、quantity、order_count、unit_price_mxn、exchange_rate。允许数字、+ - * /、括号和空格。
+                公式变量：sales_brl、quantity、order_count、unit_price_brl、exchange_rate。兼容旧变量 sales_mxn、unit_price_mxn。允许数字、+ - * /、括号和空格。
               </p>
               <label className="flex items-center gap-2 text-sm font-medium text-slate-700">
                 <input

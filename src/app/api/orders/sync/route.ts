@@ -1,4 +1,9 @@
-import { NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
+import {
+  countryName,
+  localCurrency,
+  marketplaceName,
+} from "@/lib/market-config";
 import { supabase } from "@/lib/supabase";
 
 type SyncOrderBody = {
@@ -139,9 +144,9 @@ export async function POST(request: Request) {
 
     const payload = {
       order_no: orderNo,
-      platform: optionalString(body.platform, "Mercado Libre MX"),
-      country: optionalString(body.country, "MX"),
-      currency: optionalString(body.currency, "MXN"),
+      platform: optionalString(body.platform, marketplaceName),
+      country: optionalString(body.country, countryName),
+      currency: optionalString(body.currency, localCurrency),
       revenue,
       product_cost: productCost,
       shipping_cost: shippingCost,

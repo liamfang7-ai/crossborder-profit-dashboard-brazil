@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import { MercadoLibreSyncClient } from "@/components/mercadolibre-sync-client";
 import {
   getMercadoLibreConfigStatus,
@@ -28,10 +28,10 @@ export default async function MercadoLibrePage() {
       <div className="mx-auto flex w-full max-w-5xl flex-col gap-6 px-4 py-6 sm:px-6 lg:px-8">
         <header className="rounded-lg border border-slate-200 bg-white px-5 py-5 shadow-sm shadow-slate-200/60">
           <p className="text-sm font-medium text-slate-500">
-            Mercado Libre México
+            Mercado Livre Brasil
           </p>
           <h1 className="mt-2 text-2xl font-semibold tracking-normal text-slate-950 sm:text-3xl">
-            Mercado Libre API 连接
+            Mercado Livre Brasil API 连接
           </h1>
           <p className="mt-3 text-sm text-slate-500">
             当前已支持 OAuth 授权、token 保存和最近订单手动同步。
@@ -41,7 +41,7 @@ export default async function MercadoLibrePage() {
               href="/api/mercadolibre/auth"
               className="rounded-lg bg-slate-950 px-4 py-2 text-sm font-medium text-white"
             >
-              连接 Mercado Libre
+              连接 Mercado Livre Brasil
             </Link>
             <Link
               href="/"

@@ -1,4 +1,4 @@
-import { cookies } from "next/headers";
+﻿import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { LoginForm } from "@/components/login-form";
 import {
@@ -26,7 +26,7 @@ export default async function LoginPage() {
     <main className="flex min-h-screen items-center justify-center bg-slate-100 px-4 py-8 text-slate-950">
       <section className="w-full max-w-sm rounded-lg border border-slate-200 bg-white px-5 py-6 shadow-sm shadow-slate-200/60 sm:px-6">
         <p className="text-sm font-medium text-slate-500">
-          Mercado Libre México
+          Mercado Livre Brasil
         </p>
         <h1 className="mt-2 text-2xl font-semibold tracking-normal text-slate-950">
           利润检测系统登录

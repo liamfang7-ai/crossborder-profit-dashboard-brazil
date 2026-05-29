@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useMemo, useRef, useState } from "react";
 import { calculateProfit } from "@/lib/profit";
@@ -59,7 +59,7 @@ type SystemField =
 
 type Mapping = Record<SystemField, string>;
 
-const mappingStorageKey = "Mercado Libre MX CSV Mapping";
+const mappingStorageKey = "Mercado Livre Brasil CSV Mapping";
 
 const fieldConfigs: Array<{
   field: SystemField;
@@ -70,7 +70,7 @@ const fieldConfigs: Array<{
   { field: "orderNo", label: "订单号", required: true, defaultText: "必选" },
   {
     field: "revenue",
-    label: "销售额（墨西哥比索）",
+    label: "销售额（巴西比索）",
     required: true,
     defaultText: "必选",
   },
@@ -94,31 +94,31 @@ const fieldConfigs: Array<{
   },
   {
     field: "lastMileFee",
-    label: "尾程派送费（MXN）",
+    label: "尾程派送费（BRL）",
     required: false,
     defaultText: "0",
   },
   {
     field: "platformFee",
-    label: "平台手续费（MXN）",
+    label: "平台手续费（BRL）",
     required: false,
     defaultText: "0",
   },
   {
     field: "platformTax",
-    label: "平台税费（MXN）",
+    label: "平台税费（BRL）",
     required: false,
     defaultText: "0",
   },
-  { field: "adCost", label: "广告费（MXN）", required: false, defaultText: "0" },
-  { field: "otherFee", label: "其他费用（MXN）", required: false, defaultText: "0" },
-  { field: "currency", label: "币种", required: false, defaultText: "MXN" },
-  { field: "country", label: "国家", required: false, defaultText: "MX" },
+  { field: "adCost", label: "广告费（BRL）", required: false, defaultText: "0" },
+  { field: "otherFee", label: "其他费用（BRL）", required: false, defaultText: "0" },
+  { field: "currency", label: "币种", required: false, defaultText: "BRL" },
+  { field: "country", label: "国家", required: false, defaultText: "Brazil" },
   {
     field: "platform",
     label: "平台",
     required: false,
-    defaultText: "Mercado Libre MX",
+    defaultText: "Mercado Livre Brasil",
   },
   {
     field: "exchangeRateToUsd",
@@ -128,7 +128,7 @@ const fieldConfigs: Array<{
   },
   {
     field: "exchangeRateMxnToCny",
-    label: "MXN 转 CNY 汇率",
+    label: "BRL 转 CNY 汇率",
     required: false,
     defaultText: "0.42",
   },
@@ -529,12 +529,12 @@ function buildOrder(
       orderNo,
       platform: toText(
         getMappedCell(headers, cells, mapping, "platform"),
-        "Mercado Libre MX",
+        "Mercado Livre Brasil",
       ),
-      country: toText(getMappedCell(headers, cells, mapping, "country"), "MX"),
+      country: toText(getMappedCell(headers, cells, mapping, "country"), "Brazil"),
       currency: toText(
         getMappedCell(headers, cells, mapping, "currency"),
-        "MXN",
+        "BRL",
       ),
       revenue: revenue.value,
       productCost: productCost.value,

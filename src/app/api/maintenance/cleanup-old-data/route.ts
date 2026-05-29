@@ -1,5 +1,5 @@
-import { NextResponse } from "next/server";
-import { getMexicoRetentionCutoff } from "@/lib/mexico-time";
+﻿import { NextResponse } from "next/server";
+import { getMarketRetentionCutoff } from "@/lib/market-time";
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
 
 function isAuthorized(request: Request) {
@@ -19,7 +19,7 @@ async function cleanup(request: Request) {
   }
 
   try {
-    const cutoff = getMexicoRetentionCutoff(90).toISOString();
+    const cutoff = getMarketRetentionCutoff(90).toISOString();
     const admin = getSupabaseAdmin();
     const { data: deletedItems, error: itemsError } = await admin
       .from("order_items")

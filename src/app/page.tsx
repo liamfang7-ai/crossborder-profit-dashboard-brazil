@@ -1,11 +1,11 @@
-import { DashboardClient } from "@/components/dashboard-client";
-import { getDefaultMexicoMonthRange } from "@/lib/mexico-time";
+﻿import { DashboardClient } from "@/components/dashboard-client";
+import { getDefaultMarketMonthRange } from "@/lib/market-time";
 import { getSkuDashboardDataResult } from "@/lib/supabase";
 
 export const revalidate = 0;
 
 export default async function DashboardPage() {
-  const initialRange = getDefaultMexicoMonthRange();
+  const initialRange = getDefaultMarketMonthRange();
   const result = await getSkuDashboardDataResult({
     start: initialRange.start,
     end: initialRange.end,
