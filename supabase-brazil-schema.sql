@@ -1,4 +1,4 @@
--- Mercado Livre Brasil SKU Profit Dashboard
+﻿-- Brazil Marketplace SKU Profit Dashboard
 -- Supabase schema for a fresh Brazil project.
 -- Safe to paste into the Supabase SQL Editor and run.
 --
@@ -19,7 +19,7 @@ $$;
 create table if not exists public.orders (
   id bigserial primary key,
   order_no text not null,
-  platform text not null default 'Mercado Livre Brasil',
+  platform text not null default 'Brazil Marketplace',
   site_id text not null default 'MLB',
   country text not null default 'Brazil',
   currency text not null default 'BRL',
@@ -51,7 +51,7 @@ create table if not exists public.order_items (
   id bigserial primary key,
   sync_key text not null,
   order_no text not null,
-  platform text not null default 'Mercado Livre Brasil',
+  platform text not null default 'Brazil Marketplace',
   site_id text not null default 'MLB',
   country text not null default 'Brazil',
   currency text not null default 'BRL',

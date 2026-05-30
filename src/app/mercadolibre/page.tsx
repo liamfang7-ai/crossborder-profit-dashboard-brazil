@@ -33,19 +33,23 @@ export default async function MercadoLibrePage() {
           <h1 className="mt-2 text-2xl font-semibold tracking-normal text-slate-950 sm:text-3xl">
             Brazil Marketplace Integration
           </h1>
+          <h2 className="mt-2 text-lg font-semibold text-slate-800">
+            巴西平台订单同步
+          </h2>
           <p className="mt-3 text-sm text-slate-500">
-            用于授权并同步巴西 Mercado 平台订单到 Sonic 内部利润看板。
+            用于授权并同步第三方巴西平台订单到 Sonic 内部利润看板。
           </p>
           <p className="mt-3 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
-            Mercado Livre is a third-party marketplace. This dashboard is an internal
-            Sonic tool and is not an official Mercado Livre website.
+            This page is for marketplace integration only. Sonic operates this
+            internal dashboard independently, and this page is not an official
+            third-party marketplace website.
           </p>
           <div className="mt-4 flex flex-wrap gap-3">
             <Link
               href="/api/mercadolibre/auth"
               className="rounded-lg bg-slate-950 px-4 py-2 text-sm font-medium text-white"
             >
-              连接巴西店铺
+              连接巴西店铺 / Connect Brazil marketplace account
             </Link>
             <Link
               href="/"
